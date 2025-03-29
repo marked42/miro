@@ -1,6 +1,7 @@
 "use client";
 
 import Image from 'next/image'
+import Hint from './hint';
 import {
     useOrganization,
     useOrganizationList
@@ -26,13 +27,20 @@ export default function Item({ id, name, imageUrl }: ItemProps) {
 
     return (
         <div className='aspect-square relative'>
-            <Image
-                fill
-                alt={name}
-                src={imageUrl}
-                onClick={onClick}
-                className={cn("rounded-md cursor-pointer opacity-75 hover:opacity-100 transition", isActive && 'opacity-100')}
-            />
+            <Hint
+                label={name}
+                align="start"
+                side="right"
+                sideOffset={18}
+            >
+                <Image
+                    fill
+                    alt={name}
+                    src={imageUrl}
+                    onClick={onClick}
+                    className={cn("rounded-md cursor-pointer opacity-75 hover:opacity-100 transition", isActive && 'opacity-100')}
+                />
+            </Hint>
         </div>
     )
 }
