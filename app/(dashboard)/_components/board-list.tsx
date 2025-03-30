@@ -1,8 +1,12 @@
 'use client';
 
+import { useQuery } from "convex/react";
 import EmptyBoards from "./empty-boards";
 import EmptyFavorites from "./empty-favorite";
 import EmptySearch from "./empty-search";
+import { api } from "@/convex/_generated/api";
+import { Loading } from "@/components/auth/loading";
+import BoardCard from "./board-card";
 
 export interface BoardListProps {
     orgId: string;
@@ -14,7 +18,15 @@ export interface BoardListProps {
 
 export default function BoardList({ orgId, query }: BoardListProps) {
     // TODO: API Call
-    const data = [];
+    const data = useQuery(api.boards.get, { orgId });
+
+    if (data === undefined) {
+        return (
+            <div>
+                <Loading />
+            </div>
+        )
+    }
 
     if (!data.length && query.search) {
         return <EmptySearch />
@@ -28,5 +40,28 @@ export default function BoardList({ orgId, query }: BoardListProps) {
         return <EmptyBoards />
     }
 
-    return <div>{JSON.stringify(query)}</div>
+    return (
+        <div>
+            <h2 className="text-3xl">
+                {query.favorites ? "Favorite boards" : "Team boards"}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10">
+                {data?.map(board => {
+                    return (
+                        <BoardCard
+                            key={board._id}
+                            id={board._id}
+                            title={board.title}
+                            authorId={board.authorName}
+                            authorName={board.authorName}
+                            createdAt={board._creationTime}
+                            orgId={board.orgId}
+                            imageUrl={board.imageUrl}
+                            isFavorite={false}
+                        />
+                    )
+                })}
+            </div>
+        </div>
+    )
 }
