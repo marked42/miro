@@ -2,12 +2,13 @@
 
 import { DropdownMenuContentProps, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Link2, Trash2 } from "lucide-react";
+import { Link2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { api } from "@/convex/_generated/api";
 import { ConfirmModal } from "./confirm-modal";
 import { Button } from "./ui/button";
+import { useRenameModal } from "@/store/use-rename-modal";
 
 export interface ActionProps {
     children: React.ReactNode;
@@ -24,6 +25,8 @@ export const Actions = ({
     id,
     title
 }: ActionProps) => {
+    const { onOpen } = useRenameModal();
+
     const onCopyLink = () => {
         navigator.clipboard.writeText(`${window.location.origin}/board/${id}`)
             .then(() => toast.success("Link copied"))
@@ -55,6 +58,10 @@ export const Actions = ({
                 <DropdownMenuItem className="p-3 cursor-pointer" onClick={onCopyLink}>
                     <Link2 className="h-4 w-4 mr-2"></Link2>
                     Copy board link
+                </DropdownMenuItem>
+                <DropdownMenuItem className="p-3 cursor-pointer" onClick={() => onOpen(id, title)}>
+                    <Pencil className="h-4 w-4 mr-2"></Pencil>
+                    Rename
                 </DropdownMenuItem>
                 {/* TODO: why wrapping inside a DropDownMenuItem makes modal  close quickly after opened */}
                 <ConfirmModal
