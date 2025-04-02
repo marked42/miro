@@ -1,5 +1,5 @@
 import { v } from 'convex/values'
-import { mutation, query } from './_generated/server'
+import { mutation } from './_generated/server'
 
 const images = [
   '/placeholder/1.svg',
@@ -152,7 +152,6 @@ export const unfavorite = mutation({
     const existingFavorite = await ctx.db
       .query('userFavorites')
       .withIndex('by_user_board', (q) => {
-        // TODO: check if orgId is needed
         return q.eq('userId', userId).eq('boardId', board._id)
       })
       .unique()

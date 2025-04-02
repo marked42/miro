@@ -26,3 +26,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 1. use [Clerk](https://dashboard.clerk.com/apps/app_2uz7PdaeImwSRqMwQ1Y7ESBaHet/instances/ins_2uz7PYeyCkToGEHShrfHBpR5ZCV/jwt-templates/jtmp_2uz8pRUjYaBj3U2yyY5KJ3bsech) for Authentication
 1. use [convex](https://dashboard.convex.dev/t/mark-zhang) as backend service, refer to [doc] authentication with clerk.
+
+## TODO:
+
+1. button inside link `<a>`, click button triggers opening url
