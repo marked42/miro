@@ -69,7 +69,7 @@ export default function BoardList({ orgId, query }: BoardListProps) {
                             createdAt={board._creationTime}
                             orgId={board.orgId}
                             imageUrl={board.imageUrl}
-                            isFavorite={false}
+                            isFavorite={board.isFavorite}
                         />
                     )
                 })}

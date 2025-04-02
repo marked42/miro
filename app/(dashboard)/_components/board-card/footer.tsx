@@ -18,13 +18,21 @@ export default function Footer({
     onClick,
     disabled,
 }: FooterProps) {
+    const handleClick: React.MouseEventHandler = (e) => {
+        // click propagates to card, it's wrapped inside a link, triggers jumping to new page.
+        e.stopPropagation();
+        e.preventDefault();
+
+        onClick();
+    }
+
     return (
         <div className="relative bg-white p-3">
             <p className="text-[13px] truncate max-w-[calc(100% - 20px)]">{title}</p>
             <p className="opacity-0 group-hover:opacity-100 transition-opacity text-[11px] text-muted-foreground truncate"> {authorLabel}, {createdAtLabel} </p>
             <button
                 disabled={disabled}
-                onClick={onClick}
+                onClick={handleClick}
                 className={cn("opacity-0 group-hover:opacity-100 transition absolute top-3 right-3 text-muted-foreground hover:text-blue-600",
                     disabled && "cursor-not-allowed opacity-75"
                 )}
