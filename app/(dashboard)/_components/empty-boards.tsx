@@ -6,8 +6,10 @@ import Image from 'next/image'
 import { api } from '@/convex/_generated/api'
 import { useOrganization } from '@clerk/nextjs'
 import { useApiMutation } from '@/hooks/use-api-mutation'
+import { useRouter } from 'next/navigation'
 
 export default function EmptyFavorites() {
+    const router = useRouter();
     const { organization } = useOrganization();
     const { mutate, pending } = useApiMutation(api.board.create);
 
@@ -16,10 +18,10 @@ export default function EmptyFavorites() {
         mutate({
             orgId: organization.id,
             title: 'Untitled',
-        }).then(() => {
-            // TODO: redirect to board/{id}
+        }).then(id => {
+            router.push(`/board/${id}`)
             toast.success("Board created")
-        }).catch(error => {
+        }).catch(() => {
             toast.error('Failed to create board')
         })
     }

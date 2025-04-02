@@ -38,7 +38,7 @@ export const Actions = ({
         mutate({
             id
         }).then(() => {
-            toast.success(`Board ${id} deleted`)
+            toast.success(`Board ${title} deleted`)
         }).catch(() => {
             toast.error("Failed to delete")
         })
