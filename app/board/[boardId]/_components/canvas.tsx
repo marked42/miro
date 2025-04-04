@@ -17,7 +17,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
             className="h-full w-full relative bg-neutral-100 touch-none"
         >
             <div>{boardId + ' - ' + JSON.stringify(info)}</div>
-            <Info />
+            <Info boardId={boardId} />
             <Participants />
             <Toolbar />
         </main>

@@ -30,3 +30,14 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 ## TODO:
 
 1. button inside link `<a>`, click button triggers opening url
+1. 客户端组件静态属性问题，nextjs 如何支持 SSR
+
+```tsx
+'use client'
+
+Info.Skeleton = function InfoSkeleton() {
+  return (
+    <div className="absolute top-2 left-2 bg-white rounded-md px-1.5 h-12 w-12 flex items-center shadow-md"></div>
+  )
+}
+```
