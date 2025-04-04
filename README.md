@@ -41,3 +41,14 @@ Info.Skeleton = function InfoSkeleton() {
   )
 }
 ```
+
+1. ModalProvider Pattern, root ModalProvider/useRenameModal hook, 全局只有一个 modal 实例
+1. ClientSideSuspense 依赖反转设计
+
+```tsx
+<LiveblocksProvider authEndpoint="/api/liveblocks-auth">
+  <RoomProvider id={roomId}>
+    <ClientSideSuspense fallback={fallback}>{children}</ClientSideSuspense>
+  </RoomProvider>
+</LiveblocksProvider>
+```
