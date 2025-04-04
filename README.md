@@ -52,3 +52,13 @@ Info.Skeleton = function InfoSkeleton() {
   </RoomProvider>
 </LiveblocksProvider>
 ```
+
+1. 下面代码 foreignObject 的 transform 变话在 safari 上不会触发更新， 在 Safari 中实现可靠的 foreignObject 动态变换，最佳实践是： 始终用 `<g>` 包裹 foreignObject, 将 transform 移至 `<g>` 标签, 必要时添加 will-change: transform 提示浏览器优化；或者使用 DOM 元素。 safari 上 svg 元素的大小 class 设置不生效，需要使用 width/height 强制全屏。
+
+```html
+<svg class="h-[100vh] w-[100vw]" width="100%" height="100%">
+  <g>
+    <foreignObject style="transform: translateX(100px)"></foreignObject>
+  </g>
+</svg>
+```
