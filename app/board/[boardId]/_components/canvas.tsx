@@ -73,7 +73,8 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         setMyPresence({ cursor: current })
     }, [camera])
 
-    const onPointerLeave = useMutation(({ setMyPresence }) => {
+    const onPointerLeave = useMutation(({ setMyPresence }, e) => {
+        console.log('on pointer leave: ', e)
         setMyPresence({ cursor: null })
     }, [])
 
@@ -112,6 +113,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
                 onWheel={onWheel}
                 onPointerMove={onPointerMove}
                 onPointerLeave={onPointerLeave}
+                onMouseLeave={onPointerLeave}
                 onPointerUp={onPointerUp}
             >
                 <g style={{ transform: `translate(${camera.x}px,${camera.y}px)` }}>

@@ -62,3 +62,5 @@ Info.Skeleton = function InfoSkeleton() {
   </g>
 </svg>
 ```
+
+1. safari 浏览器 onPointerLeave 事件不触发的兼容问题
