@@ -1,7 +1,5 @@
 import { Layer, XYWH } from '@/types/canvas'
 import { shallow, useSelf, useStorage } from '@liveblocks/react'
-import { LucideGalleryVerticalEnd } from 'lucide-react';
-
 
 export const boundingBox = (layers: Layer[]): XYWH | null => {
     const first = layers[0]

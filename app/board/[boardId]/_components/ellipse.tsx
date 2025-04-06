@@ -23,7 +23,7 @@ export const Ellipse = ({
             className="drop-shadow-md"
             onPointerDown={(e) => onPointerDown(e, id)}
             style={{
-                transform: `translate(${x}px, ${y}px)`,
+                transform: `translate(${x + rx}px, ${y + ry}px)`,
             }}
             cx={0}
             cy={0}
