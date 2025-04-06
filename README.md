@@ -64,3 +64,4 @@ Info.Skeleton = function InfoSkeleton() {
 ```
 
 1. safari 浏览器 onPointerLeave 事件不触发的兼容问题
+1. only one user selection is showed for single layer, consider displaying all user selection

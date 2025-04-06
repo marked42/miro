@@ -1,3 +1,4 @@
+import { colorToCss } from "@/lib/utils";
 import { EllipseLayer } from "@/types/canvas";
 
 interface EllipseProps {
@@ -17,8 +18,6 @@ export const Ellipse = ({
 
     const rx = width * 0.5;
     const ry = height * 0.5;
-    const cx = x + rx
-    const cy = y + ry
     return (
         <ellipse
             className="drop-shadow-md"
@@ -31,8 +30,8 @@ export const Ellipse = ({
             rx={rx}
             ry={ry}
             strokeWidth={1}
-            fill={fill}
-            stroke="transparent"
+            fill={colorToCss(fill)}
+            stroke={selectionColor || "transparent"}
         />
     )
 }
