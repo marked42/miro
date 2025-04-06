@@ -5,8 +5,8 @@ import { useCallback, useState } from "react";
 import { Info } from "./info";
 import { Participants } from "./participants";
 import { Toolbar } from "./toolbar";
-import { Camera, CanvasMode, CanvasState, Color, InsertingLayerType, LayerType, Point } from "@/types/canvas";
-import { useCanRedo, useCanUndo, useHistory, useMutation, useStorage } from "@liveblocks/react";
+import { Camera, CanvasMode, CanvasState, Color, InsertingLayerType, Point } from "@/types/canvas";
+import { useCanRedo, useCanUndo, useHistory, useMutation, useMyPresence, useStorage } from "@liveblocks/react";
 import { CursorsPresence } from './cursors-presence'
 import { pointerEventToCanvasPoint } from "@/lib/utils";
 import { LiveObject } from '@liveblocks/client';
@@ -19,6 +19,7 @@ export interface CanvasProps {
 }
 
 export const Canvas = ({ boardId }: CanvasProps) => {
+    const [myPresence, setMyPresence] = useMyPresence();
     const layerIds = useStorage(root => root.layerIds);
     const [lastColor, setLastColor] = useState<Color>({ r: 0, g: 0, b: 0, })
     const insertLayer = useMutation(({ storage, setMyPresence }, layerType: InsertingLayerType, position: Point) => {
@@ -52,18 +53,25 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
     const [camera, setCamera] = useState<Camera>(() => ({ x: 0, y: 0 }))
     const onWheel = useCallback((e: React.WheelEvent) => {
-        setCamera(camera => ({
+        e.preventDefault();
+
+        const newCamera = {
             x: camera.x - e.deltaX,
             y: camera.y - e.deltaY,
-        }))
-    }, [])
+        }
+        setCamera(newCamera)
+
+        // update cursor on wheel
+        const current = pointerEventToCanvasPoint(e, newCamera)
+        setMyPresence({ cursor: current })
+    }, [camera, setMyPresence])
 
     const onPointerMove = useMutation(({ setMyPresence }, e: React.PointerEvent) => {
         e.preventDefault();
 
         const current = pointerEventToCanvasPoint(e, camera)
         setMyPresence({ cursor: current })
-    }, [])
+    }, [camera])
 
     const onPointerLeave = useMutation(({ setMyPresence }) => {
         setMyPresence({ cursor: null })
@@ -71,8 +79,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
     const onPointerUp = useMutation(({}, e) => {
         const point = pointerEventToCanvasPoint(e, camera)
-
-        console.log({ e, point, mode: canvasState.mode })
 
         if (canvasState.mode === CanvasMode.Inserting) {
             insertLayer(canvasState.layerType, point)
@@ -108,15 +114,17 @@ export const Canvas = ({ boardId }: CanvasProps) => {
                 onPointerLeave={onPointerLeave}
                 onPointerUp={onPointerUp}
             >
-                {layerIds?.map(id => (
-                    <LayerPreview
-                        key={id}
-                        id={id}
-                        onLayerPointerDown={() => {}}
-                        selectionColor={"#000"}
-                    />
-                ))}
-                <CursorsPresence />
+                <g style={{ transform: `translate(${camera.x}px,${camera.y}px)` }}>
+                    {layerIds?.map(id => (
+                        <LayerPreview
+                            key={id}
+                            id={id}
+                            onLayerPointerDown={() => {}}
+                            selectionColor={"#000"}
+                        />
+                    ))}
+                    <CursorsPresence />
+                </g>
             </svg>
         </main>
     )
