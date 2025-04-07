@@ -53,88 +53,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     const canRedo = useCanRedo();
 
     const [camera, setCamera] = useState<Camera>(() => ({ x: 0, y: 0 }))
-    const onWheel = useCallback((e: React.WheelEvent) => {
-        e.preventDefault();
-
-        const newCamera = {
-            x: camera.x - e.deltaX,
-            y: camera.y - e.deltaY,
-        }
-        setCamera(newCamera)
-
-        // update cursor on wheel
-        const current = pointerEventToCanvasPoint(e, newCamera)
-        setMyPresence({ cursor: current })
-    }, [camera, setMyPresence])
-
-    const onPointerLeave = useMutation(({ setMyPresence }, e) => {
-        console.log('on pointer leave: ', e)
-        setMyPresence({ cursor: null })
-    }, [])
-
-    const onPointerDown = useCallback((e: React.PointerEvent) => {
-        // const point = pointerEventToCanvasPoint(e, camera);
-
-        if (canvasState.mode === CanvasMode.Inserting) {
-            return
-        }
-
-        setCanvasState({ mode: CanvasMode.Pressing })
-    }, [setCanvasState, canvasState.mode])
-
-    const onPointerUp = useMutation(({}, e) => {
-        const point = pointerEventToCanvasPoint(e, camera)
-
-        if (canvasState.mode === CanvasMode.None || canvasState.mode === CanvasMode.Pressing) {
-            unselectLayers();
-            setCanvasState({
-                mode: CanvasMode.None,
-            })
-        } else if (canvasState.mode === CanvasMode.Inserting) {
-            insertLayer(canvasState.layerType, point)
-        } else {
-            setCanvasState({
-                mode: CanvasMode.None
-            })
-        }
-
-        history.resume();
-    }, [camera, canvasState, history, insertLayer])
-
-    const onLayerPointerDown = useMutation(({ self, setMyPresence }, e, layerId: string) => {
-        if (canvasState.mode === CanvasMode.Pencil || canvasState.mode === CanvasMode.Inserting) {
-            return
-        }
-
-        history.pause();
-        e.stopPropagation();
-
-        const point = pointerEventToCanvasPoint(e, camera);
-
-        if (!self.presence.selection.includes(layerId)) {
-            setMyPresence({ selection: [layerId] }, { addToHistory: true })
-        }
-        setCanvasState({ mode: CanvasMode.Translating, current: point })
-    }, [
-        setCanvasState,
-        camera,
-        history,
-        canvasState.mode,
-    ])
-
-    // selection
-    const selections = useOthersMapped(other => other.presence.selection)
-    const layerIdsToColorSelection = useMemo(() => {
-        const layerIdsToColorSelection: Record<string, string> = {};
-        for (const [connectionId, selection] of selections) {
-            for (const layerId of selection) {
-                // only one user selection is showed for single layer
-                layerIdsToColorSelection[layerId] = connectionIdToColor(connectionId);
-            }
-        }
-
-        return layerIdsToColorSelection
-    }, [selections])
 
     // translate
     const translateSelectedLayers = useMutation(({ storage, self }, point: Point) => {
@@ -196,6 +114,90 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         }
     }, [])
 
+
+    const onWheel = useCallback((e: React.WheelEvent) => {
+        e.preventDefault();
+
+        const newCamera = {
+            x: camera.x - e.deltaX,
+            y: camera.y - e.deltaY,
+        }
+        setCamera(newCamera)
+
+        // update cursor on wheel
+        const current = pointerEventToCanvasPoint(e, newCamera)
+        setMyPresence({ cursor: current })
+    }, [camera, setMyPresence])
+
+    const onPointerLeave = useMutation(({ setMyPresence }, e) => {
+        console.log('on pointer leave: ', e)
+        setMyPresence({ cursor: null })
+    }, [])
+
+    const onPointerDown = useCallback((e: React.PointerEvent) => {
+        // const point = pointerEventToCanvasPoint(e, camera);
+
+        if (canvasState.mode === CanvasMode.Inserting) {
+            return
+        }
+
+        setCanvasState({ mode: CanvasMode.Pressing })
+    }, [setCanvasState, canvasState.mode])
+
+    const onPointerUp = useMutation(({}, e) => {
+        const point = pointerEventToCanvasPoint(e, camera)
+
+        if (canvasState.mode === CanvasMode.None || canvasState.mode === CanvasMode.Pressing) {
+            unselectLayers();
+            setCanvasState({
+                mode: CanvasMode.None,
+            })
+        } else if (canvasState.mode === CanvasMode.Inserting) {
+            insertLayer(canvasState.layerType, point)
+        } else {
+            setCanvasState({
+                mode: CanvasMode.None
+            })
+        }
+
+        history.resume();
+    }, [camera, canvasState, history, insertLayer, unselectLayers])
+
+    const onLayerPointerDown = useMutation(({ self, setMyPresence }, e, layerId: string) => {
+        if (canvasState.mode === CanvasMode.Pencil || canvasState.mode === CanvasMode.Inserting) {
+            return
+        }
+
+        history.pause();
+        e.stopPropagation();
+
+        const point = pointerEventToCanvasPoint(e, camera);
+
+        if (!self.presence.selection.includes(layerId)) {
+            setMyPresence({ selection: [layerId] }, { addToHistory: true })
+        }
+        setCanvasState({ mode: CanvasMode.Translating, current: point })
+    }, [
+        setCanvasState,
+        camera,
+        history,
+        canvasState.mode,
+    ])
+
+    // selection
+    const selections = useOthersMapped(other => other.presence.selection)
+    const layerIdsToColorSelection = useMemo(() => {
+        const layerIdsToColorSelection: Record<string, string> = {};
+        for (const [connectionId, selection] of selections) {
+            for (const layerId of selection) {
+                // only one user selection is showed for single layer
+                layerIdsToColorSelection[layerId] = connectionIdToColor(connectionId);
+            }
+        }
+
+        return layerIdsToColorSelection
+    }, [selections])
+
     const onPointerMove = useMutation(({ setMyPresence }, e: React.PointerEvent) => {
         e.preventDefault();
 
@@ -209,7 +211,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
         setMyPresence({ cursor: current })
     }, [camera, canvasState, resizeSelectedLayer])
-
 
     return (
         <main
