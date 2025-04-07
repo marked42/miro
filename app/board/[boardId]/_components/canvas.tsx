@@ -99,6 +99,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         if (!self.presence.selection.includes(layerId)) {
             setMyPresence({ selection: [layerId] }, { addToHistory: true })
         }
+        console.log('pointer down translating')
         setCanvasState({ mode: CanvasMode.Translating, current: point })
     }, [
         setCanvasState,
@@ -121,6 +122,33 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         return layerIdsToColorSelection
     }, [selections])
 
+    // translate
+    const translateSelectedLayers = useMutation(({ storage, self }, point: Point) => {
+        if (canvasState.mode !== CanvasMode.Translating) {
+            return
+        }
+
+        const offset = {
+            x: point.x - canvasState.current.x,
+            y: point.y - canvasState.current.y,
+        }
+
+        const liveLayers = storage.get('layers')
+        for (const id of self.presence.selection) {
+            const layer = liveLayers.get(id)
+            if (layer) {
+                layer.update({
+                    x: layer.get('x') + offset.x,
+                    y: layer.get('y') + offset.y,
+                })
+            }
+        }
+
+        setCanvasState({ mode: CanvasMode.Translating, current: point })
+    }, [
+        canvasState,
+    ])
+
     // resize
     const resizeSelectedLayer = useMutation(({ storage, self }, point: Point) => {
         if (canvasState.mode !== CanvasMode.Resizing) {
@@ -138,7 +166,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     }, [canvasState])
 
     const onResizeHandlePointerDown = useCallback((corner: Side, initialBounds: XYWH) => {
-        console.log({ corner, initialBounds })
         history.pause();
 
         setCanvasState({
@@ -153,8 +180,10 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
         const current = pointerEventToCanvasPoint(e, camera)
 
-        if (canvasState.mode === CanvasMode.Resizing) {
-            console.log('resize')
+        if (canvasState.mode === CanvasMode.Translating) {
+            console.log('translating')
+            translateSelectedLayers(current)
+        } else if (canvasState.mode === CanvasMode.Resizing) {
             resizeSelectedLayer((current))
         }
 
