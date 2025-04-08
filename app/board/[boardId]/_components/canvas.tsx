@@ -12,6 +12,7 @@ import { connectionIdToColor, pointerEventToCanvasPoint, resizeBounds } from "@/
 import { LiveObject } from '@liveblocks/client';
 import { LayerPreview } from './layer-preview';
 import { SelectionBox } from './selection-box';
+import { SelectionTools } from './selection-tools';
 
 export const MAX_LAYERS = 100;
 
@@ -225,6 +226,10 @@ export const Canvas = ({ boardId }: CanvasProps) => {
                 canUndo={canUndo}
                 redo={() => history.redo()}
                 canRedo={canRedo}
+            />
+            <SelectionTools
+                camera={camera}
+                setLastColor={setLastColor}
             />
             <svg
                 className="h-[100vh] w-[100vw]"
