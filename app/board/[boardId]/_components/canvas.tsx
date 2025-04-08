@@ -8,7 +8,7 @@ import { Toolbar } from "./toolbar";
 import { Camera, CanvasMode, CanvasState, Color, InsertingLayerType, Point, Side, XYWH } from "@/types/canvas";
 import { useCanRedo, useCanUndo, useHistory, useMutation, useMyPresence, useStorage, useOthersMapped } from "@liveblocks/react";
 import { CursorsPresence } from './cursors-presence'
-import { connectionIdToColor, pointerEventToCanvasPoint, resizeBounds } from "@/lib/utils";
+import { connectionIdToColor, findIntersectingLayersWithRectangle, pointerEventToCanvasPoint, resizeBounds } from "@/lib/utils";
 import { LiveObject } from '@liveblocks/client';
 import { LayerPreview } from './layer-preview';
 import { SelectionBox } from './selection-box';
@@ -22,7 +22,7 @@ export interface CanvasProps {
 
 export const Canvas = ({ boardId }: CanvasProps) => {
     const [myPresence, setMyPresence] = useMyPresence();
-    const layerIds = useStorage(root => root.layerIds);
+    const layerIds = useStorage(root => root.layerIds) || [];
     const [lastColor, setLastColor] = useState<Color>({ r: 255, g: 255, b: 255, })
     const insertLayer = useMutation(({ storage, setMyPresence }, layerType: InsertingLayerType, position: Point) => {
         const liveLayers = storage.get("layers");
@@ -136,14 +136,14 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     }, [])
 
     const onPointerDown = useCallback((e: React.PointerEvent) => {
-        // const point = pointerEventToCanvasPoint(e, camera);
+        const point = pointerEventToCanvasPoint(e, camera);
 
         if (canvasState.mode === CanvasMode.Inserting) {
             return
         }
 
-        setCanvasState({ mode: CanvasMode.Pressing })
-    }, [setCanvasState, canvasState.mode])
+        setCanvasState({ mode: CanvasMode.Pressing, origin: point })
+    }, [setCanvasState, canvasState.mode, camera])
 
     const onPointerUp = useMutation(({}, e) => {
         const point = pointerEventToCanvasPoint(e, camera)
@@ -199,12 +199,40 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         return layerIdsToColorSelection
     }, [selections])
 
+    const startMultiSelection = useCallback((current: Point, origin: Point) => {
+        const THRESHOLD = 5
+        if (Math.abs(current.x - origin.x) + Math.abs(current.y - origin.y) > THRESHOLD) {
+            setCanvasState({
+                mode: CanvasMode.SelectionNet,
+                origin,
+                current,
+            })
+        }
+    }, [])
+
+    const updateSelectionNet = useMutation(({ storage, setMyPresence }, current, origin) => {
+        const layers = storage.get("layers").toImmutable();
+        // const layerIds = storage.get("layerIds").toImmutable();
+        setCanvasState({
+            mode: CanvasMode.SelectionNet,
+            origin,
+            current,
+        })
+        const ids = findIntersectingLayersWithRectangle(layerIds, layers, origin, current)
+
+        setMyPresence({ selection: ids }, { addToHistory: false })
+    }, [layerIds])
+
     const onPointerMove = useMutation(({ setMyPresence }, e: React.PointerEvent) => {
         e.preventDefault();
 
         const current = pointerEventToCanvasPoint(e, camera)
 
-        if (canvasState.mode === CanvasMode.Translating) {
+        if (canvasState.mode === CanvasMode.Pressing) {
+            startMultiSelection(current, canvasState.origin);
+        } else if (canvasState.mode === CanvasMode.SelectionNet) {
+            updateSelectionNet(current, canvasState.origin)
+        } else if (canvasState.mode === CanvasMode.Translating) {
             translateSelectedLayers(current)
         } else if (canvasState.mode === CanvasMode.Resizing) {
             resizeSelectedLayer((current))
@@ -243,7 +271,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
                 onPointerUp={onPointerUp}
             >
                 <g style={{ transform: `translate(${camera.x}px,${camera.y}px)` }}>
-                    {layerIds?.map(id => (
+                    {layerIds.map(id => (
                         <LayerPreview
                             key={id}
                             id={id}
@@ -256,6 +284,15 @@ export const Canvas = ({ boardId }: CanvasProps) => {
                     <SelectionBox
                         onResizeHandlePointerDown={onResizeHandlePointerDown}
                     />
+                    {canvasState.mode === CanvasMode.SelectionNet && canvasState.current !== undefined && (
+                        <rect
+                            className='fill-blue-500/5 stroke-blue-500 stroke-1'
+                            x={Math.min(canvasState.origin.x, canvasState.current.x)}
+                            y={Math.min(canvasState.origin.y, canvasState.current.y)}
+                            width={Math.abs(canvasState.origin.x - canvasState.current.x)}
+                            height={Math.abs(canvasState.origin.y - canvasState.current.y)}
+                        />
+                    )}
                 </g>
             </svg>
         </main>
