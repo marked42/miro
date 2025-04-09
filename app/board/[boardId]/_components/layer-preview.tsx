@@ -5,6 +5,7 @@ import { useStorage } from "@liveblocks/react";
 import { memo } from "react";
 import { Rectangle } from "./rectangle";
 import { Ellipse } from "./ellipse";
+import { Text } from './text'
 
 export interface LayerPreviewProps {
     id: string;
@@ -31,8 +32,11 @@ export const LayerPreview = memo(({
             return (
                 <Ellipse id={id} layer={layer} onPointerDown={onLayerPointerDown} selectionColor={selectionColor} />
             )
-        case LayerType.Path:
         case LayerType.Text:
+            return (
+                <Text id={id} layer={layer} onPointerDown={onLayerPointerDown} selectionColor={selectionColor} />
+            )
+        case LayerType.Path:
         case LayerType.Note:
         default:
             throw new Error("unknown layer type " + id)
