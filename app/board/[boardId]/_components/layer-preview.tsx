@@ -6,6 +6,7 @@ import { memo } from "react";
 import { Rectangle } from "./rectangle";
 import { Ellipse } from "./ellipse";
 import { Text } from './text'
+import { Note } from "./note";
 
 export interface LayerPreviewProps {
     id: string;
@@ -36,8 +37,11 @@ export const LayerPreview = memo(({
             return (
                 <Text id={id} layer={layer} onPointerDown={onLayerPointerDown} selectionColor={selectionColor} />
             )
-        case LayerType.Path:
         case LayerType.Note:
+            return (
+                <Note id={id} layer={layer} onPointerDown={onLayerPointerDown} selectionColor={selectionColor} />
+            )
+        case LayerType.Path:
         default:
             throw new Error("unknown layer type " + id)
     }
