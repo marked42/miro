@@ -14,6 +14,7 @@ import { LayerPreview } from './layer-preview';
 import { SelectionBox } from './selection-box';
 import { SelectionTools } from './selection-tools';
 import { Path } from './path';
+import { usePreventTouchpadBack } from '@/hooks/use-prevent-touchpad-back';
 
 export const MAX_LAYERS = 100;
 
@@ -118,8 +119,13 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     }, [])
 
 
+    const svgRef = usePreventTouchpadBack();
     const onWheel = useCallback((e: React.WheelEvent) => {
-        e.preventDefault();
+        console.log('wheel: ', e)
+        // 没有效果
+        // e.preventDefault();
+        // 没有效果
+        e.nativeEvent.preventDefault()
 
         const newCamera = {
             x: camera.x - e.deltaX,
@@ -333,6 +339,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
                 setLastColor={setLastColor}
             />
             <svg
+                ref={svgRef}
                 className="h-[100vh] w-[100vw]"
                 width={"100%"}
                 height={"100%"}
