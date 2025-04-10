@@ -1,7 +1,7 @@
 'use client';
 
 import { nanoid } from 'nanoid'
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Info } from "./info";
 import { Participants } from "./participants";
 import { Toolbar } from "./toolbar";
@@ -292,6 +292,27 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
         setMyPresence({ cursor: current })
     }, [camera, canvasState, startMultiSelection, updateSelectionNet, translateSelectedLayers, resizeSelectedLayer, continueDrawing])
+
+    useEffect(() => {
+        function onKeyDown(e: KeyboardEvent) {
+            switch (e.key) {
+                case "z": {
+                    if (e.ctrlKey || e.metaKey) {
+                        if (e.shiftKey) {
+                            history.redo();
+                        } else {
+                            history.undo();
+                        }
+                    }
+                }
+            }
+        }
+
+        document.addEventListener("keydown", onKeyDown)
+        return () => {
+            document.removeEventListener("keydown", onKeyDown)
+        }
+    }, [history])
 
     return (
         <main
