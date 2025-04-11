@@ -15,7 +15,7 @@ const convex = new ConvexReactClient(convexUrl)
 
 export default function ConvexClientProvider({ children }: ConvexClientProviderProps) {
     return (
-        <ClerkProvider publishableKey="pk_test_ZXhwZXJ0LWFyYWNobmlkLTcxLmNsZXJrLmFjY291bnRzLmRldiQ">
+        <ClerkProvider>
             <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
                 <Authenticated>
                     {children}

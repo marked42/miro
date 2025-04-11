@@ -5,8 +5,7 @@ import { ConvexHttpClient } from 'convex/browser'
 import { NextResponse } from 'next/server'
 
 const liveblocks = new Liveblocks({
-  secret:
-    'sk_dev_m-Q8VuwytUS3WIgZBi-SYy474OMLyln5MnzPaWwIMnm7NVWVj743b-t89IWURHOn',
+  secret: process.env.LIVEBLOCKS_SECRET_KEY!,
 })
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
