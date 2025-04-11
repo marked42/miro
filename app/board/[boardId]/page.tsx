@@ -3,9 +3,9 @@ import { Canvas } from "./_components/canvas"
 import Loading from "./_components/loading";
 
 export interface BoardIdPageProps {
-    params: {
+    params: Promise<{
         boardId: string;
-    }
+    }>
 }
 
 const BoardIdPage = async ({ params }: BoardIdPageProps) => {

@@ -132,7 +132,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         setMyPresence({ cursor: current })
     }, [camera, setMyPresence])
 
-    const onPointerLeave = useMutation(({ setMyPresence }, e) => {
+    const onPointerLeave = useMutation(({ setMyPresence }) => {
         setMyPresence({ cursor: null })
     }, [])
 

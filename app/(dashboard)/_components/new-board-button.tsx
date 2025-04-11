@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { cn } from "@/lib/utils";
-import { Plus, Router } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -20,7 +20,7 @@ export function NewBoardButton({ orgId, disabled }: NewBoardButtonProps) {
         }).then((id) => {
             toast.success("Board created")
             router.push(`/board/${id}`)
-        }).catch(error => {
+        }).catch(() => {
             toast.error("Failed to create")
         })
     }
