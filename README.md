@@ -1,22 +1,49 @@
-# Miro Clone
+# Miro
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## 功能
+
+主要功能：
+
+- 🛠️ 白板从头开始
+- 🧰 带有文本、形状、便笺和铅笔的工具栏
+- 🪄 分层功能
+- 🎨 着色系统
+- ↩️ 撤消和恢复功能
+- ⌨️ 键盘快捷键
+- 🤝 实时协作
+- 💾 实时数据库
+- 🔐 授权、组织和邀请
+- ⭐️ 有利的功能
+- 🌐 Next.js 14 框架
+- 💅 TailwindCSS & ShadcnUI 造型
+
+## 开发
+
+本地配置文件`.env.local`
+
+```env
+# Deployment used by `npx convex dev`
+CONVEX_DEPLOYMENT=dev:wary-lemming-644 # team: mark-zhang, project: miro-b762d
+
+NEXT_PUBLIC_CONVEX_URL=https://wary-lemming-644.convex.cloud
+
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_ZXhwZXJ0LWFyYWNobmlkLTcxLmNsZXJrLmFjY291bnRzLmRldiQ
+CLERK_SECRET_KEY=sk_test_p3uovcEWZDYAW8cLhNHA5j4ocnxhUppFvRYDVUbxlV
+
+LIVEBLOCKS_SECRET_KEY=sk_dev_m-Q8VuwytUS3WIgZBi-SYy474OMLyln5MnzPaWwIMnm7NVWVj743b-t89IWURHOn
+```
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# 启动页面服务器
+pnpm run dev
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# 启动后端服务
+pnpm run server
+```
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
@@ -26,10 +53,12 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 1. use [Clerk](https://dashboard.clerk.com/apps/app_2uz7PdaeImwSRqMwQ1Y7ESBaHet/instances/ins_2uz7PYeyCkToGEHShrfHBpR5ZCV/jwt-templates/jtmp_2uz8pRUjYaBj3U2yyY5KJ3bsech) for Authentication
 1. use [convex](https://dashboard.convex.dev/t/mark-zhang) as backend service, refer to [doc] authentication with clerk.
+1. use liveblocks 协同编辑功能
+
+## 部署
 
 ## TODO:
 
-1. button inside link `<a>`, click button triggers opening url
 1. 客户端组件静态属性问题，nextjs 如何支持 SSR
 
 ```tsx
