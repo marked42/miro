@@ -63,7 +63,6 @@ export const Actions = ({
                     <Pencil className="h-4 w-4 mr-2"></Pencil>
                     Rename
                 </DropdownMenuItem>
-                {/* TODO: why wrapping inside a DropDownMenuItem makes modal  close quickly after opened */}
                 <ConfirmModal
                     header="Delete board?"
                     description="This will delete board and all of its content"
